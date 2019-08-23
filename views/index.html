@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="notif" style="border:1px solid black;display:none;width: 200px;">
+        <p id="title">Title</p>
+        <p id="body">Body</p>
+        <p id="close">x</p>
+    </div>
+    <h1>Hello World</h1>
+    <button onclick="notifyMe()">Notify me!</button>
+    <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase-messaging.js"></script>
+    <script>
+        function notifyMe() {
+  // Let's check if the browser supports notifications
+  if (!("Notification" in window)) {
+    alert("This browser does not support desktop notification");
+  }
+
+  // Let's check whether notification permissions have already been granted
+  else if (Notification.permission === "granted") {
+    // If it's okay let's create a notification
+    var notification = new Notification("Hi there!");
+  }
+
+  // Otherwise, we need to ask the user for permission
+  else if (Notification.permission !== "denied") {
+    Notification.requestPermission().then(function (permission) {
+      // If the user accepts, let's create a notification
+      if (permission === "granted") {
+        var notification = new Notification("Hi there!");
+      }
+    });
+  }
+
+  // At last, if the user has denied notifications, and you 
+  // want to be respectful there is no need to bother them any more.
+}
+        const firebaseConfig = {
+            apiKey: "AIzaSyDbySpk-FzleEYM7nrAjJMFtJzesUIzKDY",
+            authDomain: "push-notification-demo-542a3.firebaseapp.com",
+            databaseURL: "https://push-notification-demo-542a3.firebaseio.com",
+            projectId: "push-notification-demo-542a3",
+            storageBucket: "",
+            messagingSenderId: "401854770403",
+            appId: "1:401854770403:web:db1655d2114c1d54"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        const messaging = firebase.messaging();
+        messaging.requestPermission().then(function(){
+            console.log('Have permission');
+            return messaging.getToken();
+        }).then(function(token){
+            console.log(token);
+        }).catch(function(err){
+            console.log(err);
+        });
+
+        document.getElementById('close').addEventListener('click', ()=> {
+            document.getElementById('notif').style.display = 'none';
+        });
+
+        messaging.onMessage(function(payload){
+            console.log('onMessage: ', payload);
+            document.getElementById('title').innerHTML = payload.notification.title;
+            document.getElementById('body').innerHTML = payload.notification.body;
+            document.getElementById('notif').style.display = 'block';
+        });
+      </script>
+</body>
+</html>

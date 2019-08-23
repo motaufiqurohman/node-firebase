@@ -10,10 +10,12 @@ app.post('/push_notification', (req, res) => {
     var serviceAccount = require("./push-notification-demo-542a3-firebase-adminsdk-nnyfj-3ba320400e.json");
     var registrationToken = fcm_token;
 
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-        databaseURL: "https://nodefirebase-f5a31.firebaseio.com"
-    });
+    if (!admin.apps.length) {
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount),
+            databaseURL: "https://nodefirebase-f5a31.firebaseio.com"
+        });
+    }
 
     var payload = {
         notification: {
@@ -30,11 +32,11 @@ app.post('/push_notification', (req, res) => {
     admin.messaging().sendToDevice(registrationToken, payload, options)
     .then(function(response) {
         // console.log("Successfully sent message:", response);
-        res.status(200).json({message: response});
+        return res.status(200).json({message: response});
     })
     .catch(function(error) {
         // console.log("Error sending message:", error);
-        res.status(500).json({error: error});
+        return res.status(500).json({error: error});
     });
 });
 
