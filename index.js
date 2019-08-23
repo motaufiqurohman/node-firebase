@@ -4,8 +4,8 @@ const app = express();
 app.use(express.json());
 
 app.post('/push_notification', (req, res) => {
-    const {body, title, fcm_token} = req.body;
-
+    const {body, title, token} = req.body;
+    return console.log(req.body);
     var admin = require("firebase-admin");
     var serviceAccount = require("./push-notification-demo-542a3-firebase-adminsdk-nnyfj-3ba320400e.json");
     var registrationToken = fcm_token;
